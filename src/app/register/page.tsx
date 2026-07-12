@@ -27,7 +27,7 @@ export default function Register() {
     }
     await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
-    router.push("/"); router.refresh();
+    router.push("/pending"); router.refresh();
   }
 
   const input: React.CSSProperties = { width: "100%", fontFamily: T.sans, fontSize: 15, padding: "11px 12px", border: `1px solid ${T.ink}`, marginTop: 6, background: T.paper };
@@ -36,7 +36,7 @@ export default function Register() {
   return (
     <main style={{ maxWidth: 380, margin: "60px auto", padding: "0 20px" }}>
       <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 30, margin: "0 0 6px" }}>Create account</h1>
-      <p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: "0 0 22px" }}>Register as an author to submit manuscripts.</p>
+      <p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: "0 0 22px" }}>Register to contribute. Access is enabled after approval by the editorial office.</p>
       <form onSubmit={submit}>
         <label style={lbl}>Full name<input style={input} value={name} onChange={(e) => setName(e.target.value)} required /></label>
         <div style={{ height: 14 }} />

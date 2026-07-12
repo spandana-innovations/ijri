@@ -3,11 +3,11 @@ import { IconUsers } from "@/lib/icons";
 
 type Member = { name: string; title: string; affiliation: string; bio?: string; photo?: string };
 
-const TEAM: Member[] = [
-  { name: "Prof. Vidyadhar Reddy Aileni", title: "Former Dean, Faculty of Management", affiliation: "Osmania University; former Director, CMS, NALSAR University of Law, Hyderabad" },
+const BOARD: Member[] = [
+  { name: "Prof. Vidyadhar Reddy Aileni", title: "Editor-in-Chief · Former Dean, Faculty of Management", affiliation: "Osmania University; former Director, CMS, NALSAR University of Law, Hyderabad" },
   { name: "Dr Rajendran Govender", title: "Commissioner, Cultural, Religious and Linguistic Rights Commission", affiliation: "Republic of South Africa; Social Anthropologist; Ford and IBSA Fellow" },
   { name: "Dr. Ushadevi", title: "Professor and Chairperson, Department of Physics", affiliation: "Bangalore University" },
-  { name: "Prof. S. Y. Surendra Kumar", title: "Professor and Chairperson, Department of Political Science", affiliation: "Bangalore University, Bengaluru", bio: "Professor of Political Science with 20 years of teaching experience. He earned his M.Phil. and Ph.D. in South Asian Studies at Jawaharlal Nehru University, New Delhi, and has authored four books, over 25 book chapters, and more than 40 research articles. His research areas are public policy, South Asian security, and Indian foreign policy toward the United States and China." },
+  { name: "Prof. S. Y. Surendra Kumar", title: "Professor and Chairperson, Department of Political Science", affiliation: "Bangalore University, Bengaluru", bio: "Professor of Political Science with 20 years of teaching experience. He earned his M.Phil. and Ph.D. in South Asian Studies at Jawaharlal Nehru University and has authored four books, over 25 book chapters, and more than 40 research articles. His research areas are public policy, South Asian security, and Indian foreign policy toward the United States and China." },
   { name: "Dr Kwadwo Boateng", title: "Principal Consultant, Management Development and Productivity Institute (MDPI)", affiliation: "Ghana", bio: "An authority in financial risk analysis, sustainable finance, and ESG frameworks across Africa. He holds a Ph.D. in Management (Finance) and has authored over 16 peer-reviewed publications as a certified Publons Academy peer reviewer." },
   { name: "Dr Rajesh M V", title: "Dean of Commerce", affiliation: "Loyola Degree College, Bangalore" },
   { name: "Dr Vinod Sharma", title: "Professor in Computer Science; Director, Ramnagar Campus", affiliation: "University of Jammu", bio: "Formerly Director of the Poonch Campus and Head of Department, with 18 years of research experience and membership of Academic Councils and Boards of Studies across several Indian universities." },
@@ -19,17 +19,17 @@ const TEAM: Member[] = [
 
 const ASSIST: Member[] = [
   { name: "Ramesh Krishna", title: "Lecturer, Business Administration", affiliation: "University of Technology and Applied Sciences, Nizwa, Oman" },
-  { name: "Praveen Kumar H", title: "Data Science Senior Lead (VP)", affiliation: "Wells Fargo", bio: "A data-driven professional with 14 years of experience in data science and analytics across pharma, retail, and financial services." },
-  { name: "Amaresh Gadagi", title: "Manager, Customer Service", affiliation: "LKQ India Private Limited, Bangalore", bio: "Over 15 years of experience in business and commercial operations and analytics; industry representative on the IQAC committee at Bangalore University." },
+  { name: "Praveen Kumar H", title: "Data Science Senior Lead (VP)", affiliation: "Wells Fargo" },
+  { name: "Amaresh Gadagi", title: "Manager, Customer Service", affiliation: "LKQ India Private Limited, Bangalore" },
   { name: "Shaan", title: "Editorial Assistance", affiliation: "—" },
 ];
 
 function initials(name: string) {
-  const parts = name.replace(/^(Prof\.|Dr\.?|Mr\.?|Ms\.?)\s+/i, "").split(/\s+/);
-  return ((parts[0]?.[0] ?? "") + (parts[parts.length - 1]?.[0] ?? "")).toUpperCase();
+  const p = name.replace(/^(Prof\.|Dr\.?|Mr\.?|Ms\.?)\s+/i, "").split(/\s+/);
+  return ((p[0]?.[0] ?? "") + (p[p.length - 1]?.[0] ?? "")).toUpperCase();
 }
 
-function MemberRow({ m }: { m: Member }) {
+function BoardCard({ m }: { m: Member }) {
   return (
     <div className="memberrow" style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: 22, padding: "24px 0", borderTop: `1px solid ${T.rule}`, alignItems: "start" }}>
       <div>
@@ -55,15 +55,28 @@ export default function EditorialBoard() {
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.ink }}><IconUsers size={22} /><Eyebrow inverse>Editorial Board</Eyebrow></div>
       <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: "clamp(26px,4.4vw,38px)", margin: "14px 0 10px" }}>Editorial Board</h1>
-      <p style={{ fontFamily: T.serif, fontSize: 17, lineHeight: 1.55, color: "#333", margin: "0 0 20px" }}>
-        The journal is guided by an international board of senior academics and practitioners across the sciences, management, and the social sciences. All editorial correspondence is handled through the journal&rsquo;s editorial office.
+      <p style={{ fontFamily: T.serif, fontSize: 17, lineHeight: 1.55, color: "#333", margin: "0 0 8px" }}>
+        The board comprises senior academics and practitioners who set editorial policy and conduct double-blind peer review. All correspondence is handled through the journal&rsquo;s editorial office.
       </p>
+      {BOARD.map((m) => <BoardCard key={m.name} m={m} />)}
 
-      <h2 style={{ fontFamily: T.sans, fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", color: T.ink, margin: "26px 0 0", borderBottom: `2px solid ${T.ink}`, paddingBottom: 8 }}>Editorial Team</h2>
-      {TEAM.map((m) => <MemberRow key={m.name} m={m} />)}
-
-      <h2 style={{ fontFamily: T.sans, fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", color: T.ink, margin: "40px 0 0", borderBottom: `2px solid ${T.ink}`, paddingBottom: 8 }}>Editorial Assistance</h2>
-      {ASSIST.map((m) => <MemberRow key={m.name} m={m} />)}
+      <section style={{ marginTop: 48, background: T.g100, border: `1px solid ${T.rule}`, padding: "8px 24px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.ink, marginTop: 20 }}>
+          <IconUsers size={20} /><Eyebrow>Editorial Assistance</Eyebrow>
+        </div>
+        <p style={{ fontFamily: T.serif, fontSize: 15.5, lineHeight: 1.55, color: T.muted, margin: "10px 0 4px" }}>
+          The following provide editorial, technical, and operational support to the board.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 26px" }} className="cardgrid">
+          {ASSIST.map((m) => (
+            <div key={m.name} style={{ padding: "16px 0", borderTop: `1px solid ${T.g300}` }}>
+              <h3 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 18, margin: "0 0 3px" }}>{m.name}</h3>
+              <div style={{ fontFamily: T.sans, fontSize: 12.5, color: T.ink }}>{m.title}</div>
+              <div style={{ fontFamily: T.sans, fontSize: 12.5, color: T.muted, marginTop: 1 }}>{m.affiliation}</div>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
