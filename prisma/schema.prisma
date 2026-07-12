@@ -81,7 +81,8 @@ model Article {
   id           String        @id @default(cuid())
   title        String
   abstract     String
-  bodyMarkdown String        @db.Text
+  bodyHtml     String?       @db.Text
+  coverImage   String?
   authorNames  String
   affiliation  String?
   status       ArticleStatus @default(SUBMITTED)

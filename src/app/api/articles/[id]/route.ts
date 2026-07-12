@@ -18,20 +18,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const unlocked = await canReadArticle(user, article);
 
   const payload = {
-    id: article.id,
-    title: article.title,
-    abstract: article.abstract,
-    authorNames: article.authorNames,
-    affiliation: article.affiliation,
-    section: article.section.name,
-    volume: article.issue?.volume,
-    issue: article.issue?.number,
+    id: article.id, title: article.title, abstract: article.abstract,
+    authorNames: article.authorNames, affiliation: article.affiliation,
+    section: article.section.name, volume: article.issue?.volume, issue: article.issue?.number,
     pages: article.startPage && article.endPage ? `${article.startPage}-${article.endPage}` : null,
-    doi: article.doi,
-    reviewers: article.reviews.map((r) => r.editor.name),
-    chiefEditor: article.chiefEditor?.name ?? null,
-    locked: !unlocked,
+    doi: article.doi, reviewers: article.reviews.map((r) => r.editor.name),
+    chiefEditor: article.chiefEditor?.name ?? null, locked: !unlocked,
   };
   if (!unlocked) return Response.json(payload);
-  return Response.json({ ...payload, bodyMarkdown: article.bodyMarkdown });
+  return Response.json({ ...payload, bodyHtml: article.bodyHtml });
 }
