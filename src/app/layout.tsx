@@ -7,6 +7,12 @@ export const metadata = {
 };
 
 const CURRENT = "Volume 1, Issue 1 · July 2026";
+const NAV: [string, string][] = [
+  ["/", "Home"],
+  ["/archives", "Archives"],
+  ["/editorial-board", "Editorial Board"],
+  ["/for-authors", "For Authors"],
+];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           .body p { font-family:${T.serif}; font-size:18.5px; line-height:1.68; margin:0 0 20px; color:#1a1a1a; }
           .body blockquote { font-family:${T.serif}; font-style:italic; border-left:3px solid ${T.ink}; margin:24px 0; padding:4px 0 4px 18px; color:#333; }
           .body p:first-of-type::first-letter { font-family:${T.serif}; float:left; font-size:62px; line-height:.82; padding:6px 10px 0 0; font-weight:600; }
-          @media (max-width:860px){ .leadgrid{grid-template-columns:1fr !important;} .cardgrid{grid-template-columns:1fr 1fr !important;} }
+          @media (max-width:860px){ .leadgrid{grid-template-columns:1fr !important;} .cardgrid{grid-template-columns:1fr 1fr !important;} .memberrow{grid-template-columns:1fr !important;} }
           @media (max-width:560px){ .cardgrid{grid-template-columns:1fr !important;} }
         `}</style>
 
@@ -32,9 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span>e-ISSN: applied for</span><span>Double-blind peer-reviewed</span>
             </div>
           </div>
-          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "22px 20px 12px", textAlign: "center" }}>
-            <Link href="/" style={{ fontFamily: T.serif, fontWeight: 500, lineHeight: 1.02, color: T.ink, fontSize: "clamp(24px,5vw,44px)", display: "inline-block" }}>
-              International Journal of<br />Research and Innovation
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "20px 20px 14px", textAlign: "center" }}>
+            <Link href="/" style={{ display: "inline-block" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-stacked.png" alt="International Journal of Research and Innovation" style={{ height: "clamp(64px,11vw,96px)", width: "auto" }} />
             </Link>
           </div>
           <div style={{ borderTop: `1px solid ${T.ink}`, borderBottom: `1px solid ${T.ink}`, background: T.ink }}>
@@ -44,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <nav className="nav" style={{ background: T.faint }}>
             <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 12px", display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-              {[["/", "Home"], ["/archives", "Archives"]].map(([href, label]) => (
+              {NAV.map(([href, label]) => (
                 <Link key={href} href={href} style={{ fontFamily: T.sans, fontSize: 12, letterSpacing: "0.05em", textTransform: "uppercase", padding: "10px 14px" }}>{label}</Link>
               ))}
             </div>
@@ -53,9 +60,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {children}
 
-        <footer style={{ borderTop: `1px solid ${T.ink}`, background: T.faint, marginTop: 40 }}>
-          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "26px 20px", textAlign: "center", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: T.muted }}>
-            International Journal of Research and Innovation · ijrein.org · e-ISSN applied for
+        <footer style={{ borderTop: `1px solid ${T.ink}`, background: T.ink, marginTop: 40 }}>
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "34px 20px", textAlign: "center" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-wide-white.png" alt="IJRI" style={{ height: 30, width: "auto", opacity: 0.95 }} />
+            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9a9a9a", marginTop: 16 }}>
+              ijrein.org · e-ISSN applied for · © 2026 International Journal of Research and Innovation
+            </div>
           </div>
         </footer>
       </body>
