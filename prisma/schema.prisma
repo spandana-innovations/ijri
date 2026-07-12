@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role { AUTHOR EDITOR CHIEF_EDITOR ADMIN }
+enum ArticleStatus { SUBMITTED UNDER_REVIEW REVIEWED PUBLISHED REJECTED }
+enum Recommendation { ACCEPT MINOR_REVISION MAJOR_REVISION REJECT }
+enum PlanType { MONTHLY ANNUAL PRINT_DIGITAL SECTION }
+enum SubscriptionStatus { ACTIVE EXPIRED CANCELLED }
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  role          Role     @default(AUTHOR)
+  affiliation   String?
+  passwordHash  String?
+  createdAt     DateTime @default(now())
+  submitted     Article[]         @relation("SubmittedBy")
+  reviews       Review[]
+  decisions     Article[]         @relation("DecidedBy")
+  subscriptions Subscription[]
+  purchases     ArticlePurchase[]
+}
+
+model Section {
+  id       String         @id @default(cuid())
+  name     String         @unique
+  slug     String         @unique
+  articles Article[]
+  subs     Subscription[]
+}
+
+model Issue {
+  id          String    @id @default(cuid())
+  volume      Int
+  number      Int
+  label       String
+  isCurrent   Boolean   @default(false)
+  publishedAt DateTime?
+  articles    Article[]
+  @@unique([volume, number])
+}
+
+model Article {
+  id           String        @id @default(cuid())
+  title        String
+  abstract     String
+  bodyMarkdown String        @db.Text
+  authorNames  String
+  affiliation  String?
+  status       ArticleStatus @default(SUBMITTED)
+  section      Section       @relation(fields: [sectionId], references: [id])
+  sectionId    String
+  issue        Issue?        @relation(fields: [issueId], references: [id])
+  issueId      String?
+  startPage    Int?
+  endPage      Int?
+  doi          String?       @unique
+  pdfKey       String?
+  submittedBy   User     @relation("SubmittedBy", fields: [submittedById], references: [id])
+  submittedById String
+  chiefEditor   User?    @relation("DecidedBy", fields: [chiefEditorId], references: [id])
+  chiefEditorId String?
+  decidedAt     DateTime?
+  reviews      Review[]
+  purchases    ArticlePurchase[]
+  createdAt    DateTime  @default(now())
+  publishedAt  DateTime?
+  @@index([status])
+  @@index([issueId])
+}
+
+model Review {
+  id             String         @id @default(cuid())
+  article        Article        @relation(fields: [articleId], references: [id])
+  articleId      String
+  editor         User           @relation(fields: [editorId], references: [id])
+  editorId       String
+  recommendation Recommendation
+  comments       String?        @db.Text
+  createdAt      DateTime       @default(now())
+  @@unique([articleId, editorId])
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  user      User               @relation(fields: [userId], references: [id])
+  userId    String
+  plan      PlanType
+  status    SubscriptionStatus @default(ACTIVE)
+  print     Boolean            @default(false)
+  section   Section?           @relation(fields: [sectionId], references: [id])
+  sectionId String?
+  startsAt  DateTime           @default(now())
+  endsAt    DateTime
+  createdAt DateTime           @default(now())
+  @@index([userId, status])
+}
+
+model ArticlePurchase {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  article   Article  @relation(fields: [articleId], references: [id])
+  articleId String
+  createdAt DateTime @default(now())
+  @@unique([userId, articleId])
+}
