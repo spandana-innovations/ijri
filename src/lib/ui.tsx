@@ -3,7 +3,19 @@ import React from "react";
 export const T = {
   serif: "'Iowan Old Style','Charter','Palatino Linotype',Georgia,'Times New Roman',serif",
   sans: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
-  ink: "#111111", paper: "#ffffff", muted: "#6b6b6b", faint: "#f6f6f6", rule: "#e4e4e4",
+  ink: "#111111",
+  paper: "#ffffff",
+  muted: "#6b6b6b",
+  // gray scale
+  g50: "#fafafa",
+  g100: "#f4f4f5",
+  g200: "#e9e9ec",
+  g300: "#d6d6da",
+  g400: "#9a9aa2",
+  faint: "#f6f6f6",
+  rule: "#e4e4e4",
+  footer: "#141416",
+  footerText: "#a1a1a8",
 };
 
 export function Eyebrow({ children, inverse }: { children: React.ReactNode; inverse?: boolean }) {
