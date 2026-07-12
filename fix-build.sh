@@ -1,3 +1,18 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — fix the failed build.
+#   1) Prisma enums must have one value per line (caused P1012).
+#   2) Pin Node 20 so the AWS SDK stops warning / misbehaving.
+# Run inside the repo:  bash fix-build.sh
+# ==========================================================================
+set -euo pipefail
+echo "Fixing build..."
+
+# Pin Node 20 (Nixpacks reads .nvmrc). Does not touch package.json.
+echo "20" > .nvmrc
+
+# Rewrite schema with correctly-formatted enums.
+cat > prisma/schema.prisma << 'IJRI_EOF'
 generator client {
   provider = "prisma-client-js"
 }
@@ -146,3 +161,8 @@ model ArticlePurchase {
 
   @@unique([userId, articleId])
 }
+IJRI_EOF
+
+echo "Done. Verify locally then push:"
+echo "  npx prisma validate    # should say 'The schema is valid'"
+echo "  git add . && git commit -m 'Fix Prisma enums + pin Node 20' && git push origin main"
