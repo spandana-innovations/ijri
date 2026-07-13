@@ -28,7 +28,7 @@ export default async function Dashboard() {
       prisma.articleEvent.count({ where: { type: "VIEW" } }),
     ]);
     stats = [
-      { n: pending, label: "Users awaiting approval", href: "/admin", accent: pending > 0 },
+      { n: pending, label: "Users awaiting approval", href: "/admin/users", accent: pending > 0 },
       { n: queue, label: "Manuscripts in the queue", href: "/editor", accent: queue > 0 },
       { n: revisions, label: "Out for revision" },
       { n: published, label: "Published articles" },
@@ -36,9 +36,9 @@ export default async function Dashboard() {
       { n: views, label: "Total article views", href: "/admin/analytics" },
     ];
     actions = [
-      { href: "/admin", label: "Admin panel", desc: "Approve authors, manage sections and roles." },
+      { href: "/admin/users", label: "User management", desc: "Approve users and manage roles." },
       { href: "/editor", label: "Review desk", desc: "Read manuscripts, record reviews, publish or reject." },
-      { href: "/admin/analytics", label: "Analytics", desc: "Readership, downloads and engagement." },
+      { href: "/admin/analytics", label: "Usage analytics", desc: "Views, downloads and engagement." },
     ];
   } else if (role === "EDITOR") {
     const [queue, myReviews] = await Promise.all([

@@ -22,8 +22,9 @@ export default function BackendNav({ role, name }: { role: string; name: string 
   if (role === "CHIEF_EDITOR" || role === "ADMIN") {
     items.push(
       { href: "/editor", label: "Review desk", icon: <IconDoc size={16} /> },
-      { href: "/admin", label: "Admin panel", icon: <IconUsers size={16} /> },
-      { href: "/admin/analytics", label: "Analytics", icon: <IconInfo size={16} /> },
+      { href: "/admin/users", label: "User management", icon: <IconUsers size={16} /> },
+      { href: "/admin/sections", label: "Section management", icon: <IconLayers size={16} /> },
+      { href: "/admin/analytics", label: "Usage analytics", icon: <IconInfo size={16} /> },
     );
   }
 
