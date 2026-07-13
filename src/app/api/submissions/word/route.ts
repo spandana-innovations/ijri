@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const title = String(b?.title ?? "").trim();
   const abstract = String(b?.abstract ?? "").trim();
   const authorNames = String(b?.authorNames ?? "").trim() || acc.name;
-  const affiliation = b?.affiliation ? String(b.affiliation).trim() : (acc.affiliation ?? null);
+  const affiliation = b?.affiliation ? String(b.affiliation).trim() : null;
   const sectionId = String(b?.sectionId ?? "");
   const bodyHtml = sanitize(String(b?.bodyHtml ?? ""));
 

@@ -10,6 +10,11 @@ export default async function WordSubmitPage() {
   const acc = await getAccount();
   if (!acc) redirect("/login");
   if (!acc.approved && !isStaff(acc.role)) redirect("/pending");
-  const sections = await prisma.section.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
-  return <WordSubmit sections={sections} defaultAuthor={acc.name} defaultAffiliation={acc.affiliation ?? ""} />;
+
+  const [sections, me] = await Promise.all([
+    prisma.section.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.user.findUnique({ where: { id: acc.id }, select: { affiliation: true } }),
+  ]);
+
+  return <WordSubmit sections={sections} defaultAuthor={acc.name} defaultAffiliation={me?.affiliation ?? ""} />;
 }
