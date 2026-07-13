@@ -2,23 +2,19 @@ import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
-const SECTIONS = [
-  "Computer Science", "Medicine & Public Health", "Engineering",
-  "Economics", "Materials Science", "Social Science",
-];
+const SECTIONS = ["Computer Science", "Medicine & Public Health", "Engineering", "Economics", "Materials Science", "Social Science"];
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const DEFAULT_PASSWORD = "ChangeMe#2026";
 
 const FIG = (n: number, cap: string) =>
   `<figure style="margin:26px 0"><div style="border:1px solid #e4e4e4;background:#f6f6f6;height:200px;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b">Figure ${n}</div><figcaption style="font-family:sans-serif;font-size:12px;color:#6b6b6b;margin-top:8px"><strong>Fig. ${n}.</strong> ${cap}</figcaption></figure>`;
-
 const body = (p: string[], figCap: string) =>
   `<p>${p[0]}</p>${FIG(1, figCap)}<h2>Methods</h2><p>${p[1]}</p><h2>Results and discussion</h2><p>${p[2]}</p><blockquote>These findings suggest a path that is both practical and reproducible in resource-constrained settings.</blockquote><h2>Conclusion</h2><p>${p[3] ?? "Further work will extend these results to larger and more diverse datasets."}</p>`;
 
-// Editorial team as reviewer/editor accounts
 const STAFF: { email: string; name: string; role: Role; affiliation?: string }[] = [
   { email: "admin@ijrein.org", name: "IJRI Admin", role: "ADMIN" },
-  { email: "vreddy@ijrein.org", name: "Prof. Vidyadhar Reddy Aileni", role: "CHIEF_EDITOR", affiliation: "Osmania University" },
+  { email: "cynthia@ijrein.org", name: "Dr Cynthia Menezes Prabhu", role: "CHIEF_EDITOR", affiliation: "Bangalore University" },
+  { email: "vreddy@ijrein.org", name: "Prof. Vidyadhar Reddy Aileni", role: "EDITOR", affiliation: "Osmania University" },
   { email: "ushadevi@ijrein.org", name: "Dr. Ushadevi", role: "EDITOR", affiliation: "Bangalore University" },
   { email: "surendra@ijrein.org", name: "Prof. S. Y. Surendra Kumar", role: "EDITOR", affiliation: "Bangalore University" },
   { email: "boateng@ijrein.org", name: "Dr Kwadwo Boateng", role: "EDITOR", affiliation: "MDPI, Ghana" },
@@ -46,26 +42,16 @@ const ARTICLES: A[] = [
 ];
 
 async function main() {
-  for (const name of SECTIONS) {
-    await prisma.section.upsert({ where: { slug: slug(name) }, update: {}, create: { name, slug: slug(name) } });
-  }
-  const issue = await prisma.issue.upsert({
-    where: { volume_number: { volume: 1, number: 1 } },
-    update: { isCurrent: true },
-    create: { volume: 1, number: 1, label: "July 2026", isCurrent: true, publishedAt: new Date() },
-  });
+  for (const name of SECTIONS) await prisma.section.upsert({ where: { slug: slug(name) }, update: {}, create: { name, slug: slug(name) } });
+  const issue = await prisma.issue.upsert({ where: { volume_number: { volume: 1, number: 1 } }, update: { isCurrent: true }, create: { volume: 1, number: 1, label: "July 2026", isCurrent: true, publishedAt: new Date() } });
 
   const hash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
   const users: Record<string, string> = {};
   for (const u of STAFF) {
-    const rec = await prisma.user.upsert({
-      where: { email: u.email },
-      update: { role: u.role, approved: true, passwordHash: hash, affiliation: u.affiliation },
-      create: { email: u.email, name: u.name, role: u.role, approved: true, passwordHash: hash, affiliation: u.affiliation },
-    });
+    const rec = await prisma.user.upsert({ where: { email: u.email }, update: { role: u.role, approved: true, passwordHash: hash, affiliation: u.affiliation }, create: { email: u.email, name: u.name, role: u.role, approved: true, passwordHash: hash, affiliation: u.affiliation } });
     users[u.name] = rec.id;
   }
-  const chiefId = users["Prof. Vidyadhar Reddy Aileni"];
+  const chiefId = users["Dr Cynthia Menezes Prabhu"];
   const submitterId = users["IJRI Admin"];
 
   let created = 0;
@@ -73,21 +59,10 @@ async function main() {
     const section = await prisma.section.findUnique({ where: { slug: slug(a.section) } });
     if (!section) continue;
     if (await prisma.article.findFirst({ where: { title: a.title } })) continue;
-    const article = await prisma.article.create({
-      data: {
-        title: a.title, abstract: a.abstract, bodyHtml: body(a.paras, a.figCap),
-        authorNames: a.authors, affiliation: a.aff, status: "PUBLISHED",
-        sectionId: section.id, issueId: issue.id, startPage: a.start, endPage: a.end,
-        submittedById: submitterId, chiefEditorId: chiefId, decidedAt: new Date(), publishedAt: new Date(),
-      },
-    });
-    for (const rn of a.reviewers) {
-      const eid = users[rn];
-      if (eid) await prisma.review.create({ data: { articleId: article.id, editorId: eid, recommendation: "ACCEPT" } });
-    }
+    const article = await prisma.article.create({ data: { title: a.title, abstract: a.abstract, bodyHtml: body(a.paras, a.figCap), authorNames: a.authors, affiliation: a.aff, status: "PUBLISHED", sectionId: section.id, issueId: issue.id, startPage: a.start, endPage: a.end, submittedById: submitterId, chiefEditorId: chiefId, decidedAt: new Date(), publishedAt: new Date() } });
+    for (const rn of a.reviewers) { const eid = users[rn]; if (eid) await prisma.review.create({ data: { articleId: article.id, editorId: eid, recommendation: "ACCEPT" } }); }
     created++;
   }
-  console.log(`Seed complete: ${SECTIONS.length} sections, ${STAFF.length} staff/editors, ${created} new articles. Password: ${DEFAULT_PASSWORD}`);
+  console.log(`Seed complete: EIC = Dr Cynthia Menezes Prabhu, ${STAFF.length} staff, ${created} new articles.`);
 }
-
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

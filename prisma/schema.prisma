@@ -18,6 +18,7 @@ enum ArticleStatus {
   SUBMITTED
   UNDER_REVIEW
   REVIEWED
+  REVISION_REQUESTED
   PUBLISHED
   REJECTED
 }
@@ -40,6 +41,12 @@ enum SubscriptionStatus {
   ACTIVE
   EXPIRED
   CANCELLED
+}
+
+enum EventType {
+  VIEW
+  DOWNLOAD
+  SHARE
 }
 
 model User {
@@ -88,6 +95,8 @@ model Article {
   authorNames  String
   affiliation  String?
   status       ArticleStatus @default(SUBMITTED)
+  editorFeedback String?     @db.Text
+  revisionCount Int          @default(0)
   section      Section       @relation(fields: [sectionId], references: [id])
   sectionId    String
   issue        Issue?        @relation(fields: [issueId], references: [id])
@@ -103,6 +112,7 @@ model Article {
   decidedAt     DateTime?
   reviews      Review[]
   purchases    ArticlePurchase[]
+  events       ArticleEvent[]
   createdAt    DateTime  @default(now())
   publishedAt  DateTime?
 
@@ -148,4 +158,16 @@ model ArticlePurchase {
   createdAt DateTime @default(now())
 
   @@unique([userId, articleId])
+}
+
+model ArticleEvent {
+  id        String    @id @default(cuid())
+  article   Article   @relation(fields: [articleId], references: [id])
+  articleId String
+  type      EventType
+  device    String?
+  createdAt DateTime  @default(now())
+
+  @@index([articleId, type])
+  @@index([type, createdAt])
 }
