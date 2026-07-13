@@ -28,6 +28,7 @@ const FOOTER_COLS: { head: string; icon: React.ReactNode; links: [string, string
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
+  const acc = await getAccount();
   const user = session?.user as { name?: string | null } | undefined;
 
   return (
