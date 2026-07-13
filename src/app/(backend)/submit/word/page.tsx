@@ -1,20 +1,13 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getAccount } from "@/lib/account";
-import { isStaff } from "@/lib/auth";
-import WordSubmit from "./WordSubmit";
+import WordUpload from "./WordUpload";
 
 export const dynamic = "force-dynamic";
 
-export default async function WordSubmitPage() {
+export default async function WordUploadPage() {
   const acc = await getAccount();
   if (!acc) redirect("/login");
-  if (!acc.approved && !isStaff(acc.role)) redirect("/pending");
-
-  const [sections, me] = await Promise.all([
-    prisma.section.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.user.findUnique({ where: { id: acc.id }, select: { affiliation: true } }),
-  ]);
-
-  return <WordSubmit sections={sections} defaultAuthor={acc.name} defaultAffiliation={me?.affiliation ?? ""} />;
+  const sections = await prisma.section.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+  return <WordUpload sections={sections} defaultAuthor={acc.name} />;
 }

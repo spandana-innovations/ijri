@@ -1,9 +1,13 @@
-// mammoth ships no types for its browser entry point.
 declare module "mammoth/mammoth.browser" {
-  const mammoth: any;
-  export default mammoth;
+  export interface MammothImage { contentType: string; read(encoding: string): Promise<string>; }
+  export interface ConvertResult { value: string; messages: unknown[]; }
+  export const images: { imgElement(fn: (image: MammothImage) => Promise<{ src: string }>): unknown };
+  export function convertToHtml(input: { arrayBuffer: ArrayBuffer }, options?: unknown): Promise<ConvertResult>;
+  const _default: { convertToHtml: typeof convertToHtml; images: typeof images };
+  export default _default;
 }
 declare module "mammoth" {
-  const mammoth: any;
-  export default mammoth;
+  export * from "mammoth/mammoth.browser";
+  import d from "mammoth/mammoth.browser";
+  export default d;
 }
