@@ -38,7 +38,7 @@ export default async function Dashboard() {
     actions = [
       { href: "/admin/users", label: "User management", desc: "Approve users and manage roles." },
       { href: "/editor", label: "Review desk", desc: "Read manuscripts, record reviews, publish or reject." },
-      { href: "/admin/analytics", label: "Usage analytics", desc: "Views, downloads and engagement." },
+      { href: "/admin/analytics", label: "Application analytics", desc: "Views, downloads and engagement." },
     ];
   } else if (role === "EDITOR") {
     const [queue, myReviews] = await Promise.all([

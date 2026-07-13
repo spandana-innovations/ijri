@@ -1,3 +1,14 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — restore the previous editorial board page (curated static version:
+# Dr Cynthia Menezes Prabhu as Editor-in-Chief, country flags, full bios).
+# No profile pictures — exactly as it was before the DB-driven rebuild.
+# Run in repo:  bash build-board2.sh  ->  npm run build
+# ==========================================================================
+set -euo pipefail
+mkdir -p src/app/editorial-board
+
+cat > src/app/editorial-board/page.tsx << 'IJRI_EOF'
 import { T, Eyebrow } from "@/lib/ui";
 import { IconUsers } from "@/lib/icons";
 
@@ -84,3 +95,6 @@ export default function EditorialBoard() {
     </main>
   );
 }
+IJRI_EOF
+
+echo "Previous editorial board restored. Now run:  npm run build"

@@ -36,6 +36,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body style={{ margin: 0, background: T.paper, color: T.ink }}>
         <style>{`
           * { box-sizing: border-box; }
+          .dashbtn { border:1px solid ${T.ink}; padding:2px 9px; text-transform:uppercase; letter-spacing:.06em; }
+          .dashbtn:hover { background:${T.ink}; color:${T.paper}; }
           a { color: inherit; text-decoration: none; }
           .nav a:hover { background:${T.g200}; }
           .cardtitle { text-decoration: underline transparent; text-underline-offset: 3px; transition: text-decoration-color .15s; }
@@ -60,6 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <span>e-ISSN: applied for</span>
                 {user ? (
                   <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    <Link href="/dashboard" className="dashbtn">◆ Dashboard</Link>
                     <span style={{ color: T.ink }}>{user.name}</span>
                     <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
                       <button className="linkbtn" style={{ textTransform: "uppercase", letterSpacing: "0.06em", textDecoration: "underline", textUnderlineOffset: 2 }}>Sign out</button>

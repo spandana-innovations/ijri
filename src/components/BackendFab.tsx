@@ -5,28 +5,21 @@ import { T } from "@/lib/ui";
 
 const STAFF = ["EDITOR", "CHIEF_EDITOR", "ADMIN"];
 
+// Staff shortcuts on public article pages only. The Dashboard button lives
+// in the top bar next to sign in / sign out.
 export default function BackendFab({ loggedIn, role }: { loggedIn: boolean; role: string }) {
   const path = usePathname();
-  if (!loggedIn) return null;
-  if (path.startsWith("/dashboard") || path.startsWith("/admin") || path.startsWith("/editor") || path.startsWith("/my-submissions") || path.startsWith("/submit")) return null;
-
+  if (!loggedIn || !STAFF.includes(role)) return null;
   const m = path.match(/^\/articles\/([^/]+)$/);
-  const articleId = m?.[1];
-  const isStaff = STAFF.includes(role);
+  if (!m) return null;
+  const articleId = m[1];
 
   const base: React.CSSProperties = { fontFamily: T.sans, fontSize: 12, letterSpacing: "0.05em", textTransform: "uppercase", padding: "10px 15px", border: `1px solid ${T.ink}`, boxShadow: "0 2px 12px rgba(0,0,0,0.22)", cursor: "pointer" };
-  const dark: React.CSSProperties = { ...base, background: T.ink, color: T.paper };
-  const light: React.CSSProperties = { ...base, background: T.paper, color: T.ink };
 
   return (
-    <div style={{ position: "fixed", right: 16, bottom: 16, zIndex: 60, display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end", maxWidth: "92vw" }}>
-      {articleId && isStaff && (
-        <>
-          <Link href={`/editor/${articleId}`} style={dark}>Review &amp; edit</Link>
-          <Link href={`/history/${articleId}`} style={light}>Edit log</Link>
-        </>
-      )}
-      <Link href="/dashboard" style={dark}>◆ Dashboard</Link>
+    <div style={{ position: "fixed", right: 16, bottom: 16, zIndex: 60, display: "flex", gap: 8 }}>
+      <Link href={`/editor/${articleId}`} style={{ ...base, background: T.ink, color: T.paper }}>Review &amp; edit</Link>
+      <Link href={`/history/${articleId}`} style={{ ...base, background: T.paper, color: T.ink }}>Edit log</Link>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export default function BackendNav({ role, name }: { role: string; name: string 
       { href: "/editor", label: "Review desk", icon: <IconDoc size={16} /> },
       { href: "/admin/users", label: "User management", icon: <IconUsers size={16} /> },
       { href: "/admin/sections", label: "Section management", icon: <IconLayers size={16} /> },
-      { href: "/admin/analytics", label: "Usage analytics", icon: <IconInfo size={16} /> },
+      { href: "/admin/analytics", label: "Application analytics", icon: <IconInfo size={16} /> },
     );
   }
 

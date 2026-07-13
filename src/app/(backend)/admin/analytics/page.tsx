@@ -79,7 +79,7 @@ export default async function Analytics() {
   return (
     <main>
       <Link href="/dashboard" style={{ fontFamily: T.sans, fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase", color: T.muted }}>← Dashboard</Link>
-      <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: "clamp(24px,4vw,34px)", margin: "10px 0 4px" }}>Readership analytics</h1>
+      <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: "clamp(24px,4vw,34px)", margin: "10px 0 4px" }}>Application analytics</h1>
       <p style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, margin: "0 0 20px" }}>Aggregate figures only — no individual reading histories.</p>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>

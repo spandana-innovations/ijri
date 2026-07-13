@@ -20,9 +20,19 @@ export default async function EditorQueue() {
     include: { section: { select: { name: true } }, submittedBy: { select: { name: true } }, reviews: { select: { id: true } }, assignments: { select: { id: true } } },
     orderBy: { createdAt: "asc" },
   });
-  const recent = await prisma.article.findMany({ where: { status: { in: ["PUBLISHED", "REJECTED"] } }, orderBy: { decidedAt: "desc" }, take: 6, select: { id: true, title: true, status: true } });
+  const recent = await prisma.article.findMany({
+    where: { status: { in: ["PUBLISHED", "REJECTED"] } },
+    orderBy: { decidedAt: "desc" },
+    take: 10,
+    include: {
+      submittedBy: { select: { name: true } },
+      chiefEditor: { select: { name: true } },
+      reviews: { include: { editor: { select: { name: true } } } },
+    },
+  });
 
   const fmt = (d: Date) => new Date(d).toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const fmtD = (d: Date | null) => (d ? new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—");
 
   return (
     <main>
@@ -56,10 +66,17 @@ export default async function EditorQueue() {
         <>
           <h2 style={{ fontFamily: T.sans, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted, margin: "34px 0 0", borderBottom: `1px solid ${T.rule}`, paddingBottom: 8 }}>Recent decisions</h2>
           {recent.map((a) => (
-            <div key={a.id} style={{ display: "flex", justifyContent: "space-between", padding: "11px 4px", borderBottom: `1px solid ${T.rule}`, fontFamily: T.sans, fontSize: 13 }}>
-              <span style={{ color: T.ink }}>{a.title}</span>
-              <span style={{ color: a.status === "PUBLISHED" ? "#1a7f37" : "#b00020", textTransform: "uppercase", fontSize: 11 }}>{STATUS_LABEL[a.status]}</span>
-            </div>
+            <Link key={a.id} href={`/editor/${a.id}`} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "center", padding: "13px 4px", borderBottom: `1px solid ${T.rule}` }}>
+              <div style={{ minWidth: 0 }}>
+                <div className="cardtitle" style={{ fontFamily: T.serif, fontSize: 16.5, lineHeight: 1.3 }}>{a.title}</div>
+                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, marginTop: 2 }}>
+                  by {a.authorNames} · submitted by {a.submittedBy.name}
+                  {a.reviews.length > 0 ? ` · reviewed by ${a.reviews.map((r) => r.editor.name).join(", ")}` : " · no reviews on record"}
+                  {a.chiefEditor ? ` · decided by ${a.chiefEditor.name}` : ""} · {a.status === "PUBLISHED" ? "published" : "decided"} {fmtD(a.publishedAt ?? a.decidedAt)}
+                </div>
+              </div>
+              <span style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: a.status === "PUBLISHED" ? "#1a7f37" : "#b00020", whiteSpace: "nowrap" }}>{STATUS_LABEL[a.status]}</span>
+            </Link>
           ))}
         </>
       )}
