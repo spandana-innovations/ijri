@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const type = String(b?.type ?? "") as EventType;
   if (!articleId || !ALLOWED.includes(type)) return Response.json({ ok: false }, { status: 400 });
 
-  const device = deviceClass(req.headers.get("user-agent"));
+  const device = deviceClass(req.headers.get("x-ua") || req.headers.get("user-agent"));
   try {
     // Only record events for real, published articles.
     const exists = await prisma.article.findFirst({ where: { id: articleId, status: "PUBLISHED" }, select: { id: true } });

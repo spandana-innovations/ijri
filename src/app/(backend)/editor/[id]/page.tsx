@@ -32,5 +32,12 @@ export default async function SubmissionDetail({ params }: { params: Promise<{ i
   };
   const myReview = article.reviews.find((r) => r.editorId === acc.id) ?? null;
 
-  return <ReviewDesk me={{ id: acc.id, role: acc.role }} article={article} issues={issues} myRecommendation={myReview?.recommendation ?? null} myComments={myReview?.comments ?? ""} />;
+  return (
+    <>
+      <div style={{ maxWidth: 760, margin: "0 auto", padding: "18px 20px 0" }}>
+        <a href={`/history/${a.id}`} style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Edit history →</a>
+      </div>
+      <ReviewDesk me={{ id: acc.id, role: acc.role }} article={article} issues={issues} myRecommendation={myReview?.recommendation ?? null} myComments={myReview?.comments ?? ""} />
+    </>
+  );
 }

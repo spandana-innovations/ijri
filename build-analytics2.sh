@@ -1,3 +1,70 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — (#5) real tracking + detailed analytics.
+#   - middleware records VIEW (/articles/:id) and DOWNLOAD (/api/articles/:id/pdf)
+#     server-side, so the paywalled article page needs no edit. Prefetches are
+#     ignored. Only a coarse device class is stored (no IP, no identity).
+#   - /admin/analytics rebuilt: totals, 14-day trend, top articles, per-section,
+#     top downloads, device split.
+# Run in repo:  bash build-analytics2.sh  ->  npm run build
+# ==========================================================================
+set -euo pipefail
+echo "Tracking + detailed analytics..."
+
+# ---------------------------------------------------------------- middleware (view/download beacon)
+cat > src/middleware.ts << 'IJRI_EOF'
+import { NextResponse, type NextRequest } from "next/server";
+
+export const config = { matcher: ["/articles/:id", "/api/articles/:id/pdf"] };
+
+export function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  // ignore prefetches so hovering a link doesn't inflate counts
+  if (req.headers.get("next-router-prefetch") || req.headers.get("purpose") === "prefetch") return res;
+
+  const path = req.nextUrl.pathname;
+  let articleId = "";
+  let type: "VIEW" | "DOWNLOAD" | "" = "";
+  let m = path.match(/^\/articles\/([^/]+)$/);
+  if (m) { articleId = m[1]; type = "VIEW"; }
+  else { m = path.match(/^\/api\/articles\/([^/]+)\/pdf$/); if (m) { articleId = m[1]; type = "DOWNLOAD"; } }
+
+  if (articleId && type) {
+    // fire-and-forget to our own tracking endpoint; forward the real UA
+    fetch(req.nextUrl.origin + "/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-ua": req.headers.get("user-agent") ?? "" },
+      body: JSON.stringify({ articleId, type }),
+    }).catch(() => {});
+  }
+  return res;
+}
+IJRI_EOF
+
+# ---------------------------------------------------------------- /api/track: honour forwarded UA
+if [ -f src/app/api/track/route.ts ]; then
+  node - << 'NODE'
+const fs = require("fs"); const p = "src/app/api/track/route.ts";
+let s = fs.readFileSync(p, "utf8");
+const from = `deviceClass(req.headers.get("user-agent"))`;
+const to = `deviceClass(req.headers.get("x-ua") || req.headers.get("user-agent"))`;
+if (s.includes(from)) { fs.writeFileSync(p, s.replace(from, to)); console.log("  /api/track: uses forwarded UA"); }
+else if (s.includes(`x-ua`)) console.log("  /api/track already updated");
+else console.log("  WARN: could not update /api/track UA line");
+NODE
+else
+  echo "  WARN: /api/track not found (run build-analytics.sh first)"
+fi
+
+# ---------------------------------------------------------------- detailed analytics page
+ANDIR=""
+for c in "src/app/(backend)/admin/analytics" "src/app/admin/analytics"; do
+  [ -d "$c" ] && ANDIR="$c" && break
+done
+[ -n "$ANDIR" ] || { ANDIR="src/app/admin/analytics"; mkdir -p "$ANDIR"; }
+echo "  analytics page -> $ANDIR"
+
+cat > "$ANDIR/page.tsx" << 'IJRI_EOF'
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -117,3 +184,7 @@ export default async function Analytics() {
     </main>
   );
 }
+IJRI_EOF
+
+echo ""
+echo "Tracking + analytics written. Now run:  npm run build"

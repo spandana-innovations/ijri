@@ -7,7 +7,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const acc = await getAccount(req);
   if (!acc) return unauthorized();
 
-  const article = await prisma.article.findUnique({ where: { id }, select: { submittedById: true, status: true } });
+  const article = await prisma.article.findUnique({ where: { id }, select: { submittedById: true, status: true, title: true, abstract: true, bodyHtml: true } });
   if (!article) return Response.json({ error: "Not found" }, { status: 404 });
   if (article.submittedById !== acc.id) return forbidden("You can only revise your own submissions");
   if (article.status !== "REVISION_REQUESTED") return Response.json({ error: "This submission is not open for revision" }, { status: 409 });
@@ -15,6 +15,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const b = await req.json().catch(() => null);
   const { title, abstract, bodyHtml } = b ?? {};
   if (!title || !abstract || !bodyHtml) return Response.json({ error: "Missing required fields" }, { status: 400 });
+
+  // snapshot the version that is about to be replaced (the "before")
+  await prisma.articleRevision.create({
+    data: { articleId: id, title: article.title, abstract: article.abstract, bodyHtml: article.bodyHtml, editedByName: acc.name },
+  });
 
   const updated = await prisma.article.update({
     where: { id },

@@ -1,3 +1,13 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — (#11) archives with sorting: by Issue (default), by Year, by Date.
+# Run in repo:  bash build-archives.sh  ->  npm run build
+# ==========================================================================
+set -euo pipefail
+echo "Archives with sort..."
+mkdir -p src/app/archives
+
+cat > src/app/archives/page.tsx << 'IJRI_EOF'
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { T, Eyebrow } from "@/lib/ui";
@@ -87,3 +97,7 @@ export default async function Archives({ searchParams }: { searchParams: Promise
     </main>
   );
 }
+IJRI_EOF
+
+echo ""
+echo "Archives written. Now run:  npm run build"

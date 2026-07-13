@@ -56,6 +56,10 @@ model User {
   role          Role     @default(AUTHOR)
   approved      Boolean  @default(false)
   affiliation   String?
+  designation   String?
+  orcid         String?
+  website       String?
+  bio           String?  @db.Text
   image         String?
   passwordHash  String?
   createdAt     DateTime @default(now())
@@ -87,34 +91,35 @@ model Issue {
 }
 
 model Article {
-  id           String        @id @default(cuid())
-  title        String
-  abstract     String
-  bodyHtml     String?       @db.Text
-  coverImage   String?
-  authorNames  String
-  affiliation  String?
-  status       ArticleStatus @default(SUBMITTED)
-  editorFeedback String?     @db.Text
-  revisionCount Int          @default(0)
-  section      Section       @relation(fields: [sectionId], references: [id])
-  sectionId    String
-  issue        Issue?        @relation(fields: [issueId], references: [id])
-  issueId      String?
-  startPage    Int?
-  endPage      Int?
-  doi          String?       @unique
-  pdfKey       String?
-  submittedBy   User     @relation("SubmittedBy", fields: [submittedById], references: [id])
-  submittedById String
-  chiefEditor   User?    @relation("DecidedBy", fields: [chiefEditorId], references: [id])
-  chiefEditorId String?
-  decidedAt     DateTime?
-  reviews      Review[]
-  purchases    ArticlePurchase[]
-  events       ArticleEvent[]
-  createdAt    DateTime  @default(now())
-  publishedAt  DateTime?
+  id             String        @id @default(cuid())
+  title          String
+  abstract       String
+  bodyHtml       String?       @db.Text
+  coverImage     String?
+  authorNames    String
+  affiliation    String?
+  status         ArticleStatus @default(SUBMITTED)
+  editorFeedback String?       @db.Text
+  revisionCount  Int           @default(0)
+  section        Section       @relation(fields: [sectionId], references: [id])
+  sectionId      String
+  issue          Issue?        @relation(fields: [issueId], references: [id])
+  issueId        String?
+  startPage      Int?
+  endPage        Int?
+  doi            String?       @unique
+  pdfKey         String?
+  submittedBy    User          @relation("SubmittedBy", fields: [submittedById], references: [id])
+  submittedById  String
+  chiefEditor    User?         @relation("DecidedBy", fields: [chiefEditorId], references: [id])
+  chiefEditorId  String?
+  decidedAt      DateTime?
+  reviews        Review[]
+  purchases      ArticlePurchase[]
+  events         ArticleEvent[]
+  revisions      ArticleRevision[]
+  createdAt      DateTime      @default(now())
+  publishedAt    DateTime?
 
   @@index([status])
   @@index([issueId])
@@ -170,4 +175,17 @@ model ArticleEvent {
 
   @@index([articleId, type])
   @@index([type, createdAt])
+}
+
+model ArticleRevision {
+  id           String   @id @default(cuid())
+  article      Article  @relation(fields: [articleId], references: [id])
+  articleId    String
+  title        String
+  abstract     String
+  bodyHtml     String?  @db.Text
+  editedByName String
+  createdAt    DateTime @default(now())
+
+  @@index([articleId, createdAt])
 }

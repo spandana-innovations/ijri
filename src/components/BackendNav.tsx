@@ -27,6 +27,8 @@ export default function BackendNav({ role, name }: { role: string; name: string 
     );
   }
 
+  items.push({ href: "/dashboard/profile", label: "My profile", icon: <IconUsers size={16} /> });
+
   return (
     <nav aria-label="Backend" style={{ fontFamily: T.sans }}>
       <div style={{ border: `1px solid ${T.rule}`, background: T.g50, padding: "14px 14px 8px" }}>

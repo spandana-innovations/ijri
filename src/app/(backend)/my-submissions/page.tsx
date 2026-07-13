@@ -30,6 +30,7 @@ export default async function MySubmissions() {
             <Chip>{LABEL[a.status] ?? a.status}</Chip><span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted }}>{a.section.name}</span>
           </div>
           <h3 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: 20, margin: "8px 0 4px" }}>{a.title}</h3>
+          <Link href={`/history/${a.id}`} style={{ fontFamily: T.sans, fontSize: 12, textDecoration: "underline", color: T.muted }}>Edit history →</Link>
           {a.status === "REVISION_REQUESTED" && (
             <div style={{ marginTop: 10 }}>
               <div style={{ background: "#fff8ec", border: "1px solid #e6c98a", padding: "12px 14px", marginBottom: 12 }}>

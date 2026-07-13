@@ -72,7 +72,7 @@ export default async function Dashboard() {
     <main>
       <style>{`.bk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:640px){.bk-stats{grid-template-columns:1fr 1fr}}@media(max-width:420px){.bk-stats{grid-template-columns:1fr}}`}</style>
       <Eyebrow inverse>Backend</Eyebrow>
-      <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: "clamp(24px,4vw,34px)", margin: "10px 0 20px" }}>Welcome, {acc.name.split(/\s+/)[0]}</h1>
+      <h1 style={{ fontFamily: T.serif, fontWeight: 600, fontSize: "clamp(24px,4vw,34px)", margin: "10px 0 20px" }}>Welcome, {acc.name.replace(/^(Dr|Prof|Mr|Mrs|Ms)\.?\s+/i, "").split(/\s+/)[0]}</h1>
 
       <div className="bk-stats">
         {stats.map((s, i) => {
