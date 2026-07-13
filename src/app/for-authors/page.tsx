@@ -61,7 +61,7 @@ export default function ForAuthors() {
       <div style={{ marginTop: 34, border: `2px solid ${T.ink}`, padding: "26px 26px", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between", background: T.g50 }}>
         <div>
           <h3 style={{ fontFamily: T.serif, fontSize: 24, margin: "0 0 4px" }}>Ready to submit?</h3>
-          <p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: 0 }}>Manuscripts are screened for similarity per UGC guidelines before review.</p>
+          <p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: 0 }}>Manuscripts are screened for similarity per UGC guidelines before review. References follow <a href="https://apastyle.apa.org/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline", color: T.ink }}>APA 7th edition style ↗</a>.</p>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Link href="/submit" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 22px", background: T.ink, color: T.paper, fontFamily: T.sans, fontSize: 12.5, letterSpacing: "0.06em", textTransform: "uppercase" }}>Submit <IconArrow size={15} /></Link>

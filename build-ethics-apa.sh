@@ -1,3 +1,15 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — (#1) redesign Publication Ethics with visual UI, and (#9) add an
+# APA 7th edition reference link on For Authors.
+# Run in repo:  bash build-ethics-apa.sh  ->  npm run build
+# ==========================================================================
+set -euo pipefail
+echo "Ethics redesign + APA link..."
+mkdir -p src/app/ethics src/app/for-authors
+
+# ---------------------------------------------------------------- Ethics (visual)
+cat > src/app/ethics/page.tsx << 'IJRI_EOF'
 import { T, Eyebrow } from "@/lib/ui";
 import { IconShield, IconScale, IconUsers, IconDoc, IconInfo } from "@/lib/icons";
 
@@ -39,3 +51,22 @@ export default function Ethics() {
     </main>
   );
 }
+IJRI_EOF
+
+# ---------------------------------------------------------------- APA link on For Authors (surgical)
+if [ -f src/app/for-authors/page.tsx ]; then
+  node - << 'NODE'
+const fs = require("fs"); const p = "src/app/for-authors/page.tsx";
+let s = fs.readFileSync(p, "utf8");
+const anchor = `<p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: 0 }}>Manuscripts are screened for similarity per UGC guidelines before review.</p>`;
+const withLink = `<p style={{ fontFamily: T.sans, fontSize: 13.5, color: T.muted, margin: 0 }}>Manuscripts are screened for similarity per UGC guidelines before review. References follow <a href="https://apastyle.apa.org/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline", color: T.ink }}>APA 7th edition style \u2197</a>.</p>`;
+if (s.includes(anchor)) { fs.writeFileSync(p, s.replace(anchor, withLink)); console.log("  for-authors: APA 7 link added"); }
+else if (s.includes("apastyle.apa.org")) { console.log("  for-authors: APA link already present"); }
+else { console.log("  WARN: for-authors CTA text not found; add an APA link manually"); }
+NODE
+else
+  echo "  WARN: for-authors page not found"
+fi
+
+echo ""
+echo "Done. Now run:  npm run build"
