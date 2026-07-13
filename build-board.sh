@@ -1,3 +1,16 @@
+#!/usr/bin/env bash
+# ==========================================================================
+# IJRI — editorial board with CLICKABLE names (#3).
+# DB-driven: reads Chief Editor + Editors from user accounts, each linking to
+# their /people/[id] profile. Stays in sync with User management.
+# (Requires build-profile2.sh already run: Avatar + /people/[id].)
+# Run in repo:  bash build-board.sh  ->  npm run build
+# ==========================================================================
+set -euo pipefail
+echo "Clickable editorial board..."
+mkdir -p src/app/editorial-board
+
+cat > src/app/editorial-board/page.tsx << 'IJRI_EOF'
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { T, Eyebrow } from "@/lib/ui";
@@ -71,3 +84,7 @@ export default async function EditorialBoard() {
     </main>
   );
 }
+IJRI_EOF
+
+echo ""
+echo "Editorial board written. Now run:  npm run build"

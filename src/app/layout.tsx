@@ -3,6 +3,8 @@ import { T } from "@/lib/ui";
 import { IconBook, IconFeather, IconShield, IconArrow } from "@/lib/icons";
 import { auth, signOut } from "@/auth";
 import { Providers } from "./providers";
+import { getAccount } from "@/lib/account";
+import BackendFab from "@/components/BackendFab";
 
 export const metadata = {
   title: "International Journal of Research and Innovation",
@@ -88,6 +90,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </header>
 
           {children}
+          <BackendFab loggedIn={!!acc} role={acc?.role ?? ""} />
 
           <footer style={{ background: T.footer, marginTop: 48 }}>
             <div style={{ maxWidth: 1120, margin: "0 auto", padding: "48px 20px 22px" }}>
